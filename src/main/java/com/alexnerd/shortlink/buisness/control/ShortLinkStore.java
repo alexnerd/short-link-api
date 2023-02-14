@@ -51,11 +51,11 @@ public class ShortLinkStore {
     }
 
     public ShortLink getShortLink(ShortLink shortLink) {
-        return this.getShortLink(shortLink.redirectLink);
+        return this.getOrCreate(shortLink.redirectLink);
     }
 
     @Transactional
-    public ShortLink getShortLink(String redirectLink) {
+    public ShortLink getOrCreate(String redirectLink) {
         return ShortLink.find("hash", redirectLink.hashCode())
                 .singleResultOptional()
                 .map(s -> (ShortLink) s)
