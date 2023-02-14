@@ -21,11 +21,9 @@ import io.quarkus.logging.Log;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
 
 @ApplicationScoped
 public class ShortLinkStore {
@@ -39,18 +37,8 @@ public class ShortLinkStore {
     @ConfigProperty(name = "default.link-length")
     int linkLength;
 
-    private final SecureRandom secureRandom;
-
-    public ShortLinkStore() {
-        SecureRandom secureRandom;
-        try {
-            secureRandom = SecureRandom.getInstance("NativePRNGNonBlocking");
-        } catch (NoSuchAlgorithmException ex) {
-            Log.warn("Can't use NativePRNGNonBlocking algorithm: " + ex);
-            secureRandom = new SecureRandom();
-        }
-        this.secureRandom = secureRandom;
-    }
+    @Inject
+    LinkGenerator linkGenerator;
 
     @Transactional
     public String getRedirectLink(String shortLink) {
@@ -86,7 +74,7 @@ public class ShortLinkStore {
         shortLink.createTime = LocalDateTime.now();
         for (int i = 0; i < retryNum; i++) {
             try {
-                shortLink.shortLink = generateShortLink(linkLength);
+                shortLink.shortLink = linkGenerator.generateShortLink(linkLength);
                 shortLink.persist();
                 return shortLink;
             } catch (Exception ex) {
@@ -94,11 +82,5 @@ public class ShortLinkStore {
             }
         }
         throw new ShortLinkException("Can't generate short link for " + redirectLink, 400);
-    }
-
-    private String generateShortLink(int passLength) {
-        byte[] arr = new byte[passLength];
-        secureRandom.nextBytes(arr);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(arr);
     }
 }
