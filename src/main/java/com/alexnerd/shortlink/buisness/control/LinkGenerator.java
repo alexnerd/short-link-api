@@ -18,6 +18,7 @@ package com.alexnerd.shortlink.buisness.control;
 
 import io.quarkus.logging.Log;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -25,9 +26,10 @@ import java.util.Base64;
 
 @ApplicationScoped
 public class LinkGenerator {
-    private final SecureRandom secureRandom;
+    private SecureRandom secureRandom;
 
-    public LinkGenerator() {
+    @PostConstruct
+    public void init() {
         SecureRandom secureRandom;
         try {
             secureRandom = SecureRandom.getInstance("NativePRNGNonBlocking");
