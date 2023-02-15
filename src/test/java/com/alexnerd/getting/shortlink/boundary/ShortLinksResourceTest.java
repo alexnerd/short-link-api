@@ -103,7 +103,7 @@ public class ShortLinksResourceTest {
     @Test
     @DisplayName("Should redirect from short link")
     public void shouldRedirectFromShortLinkTest() {
-        ShortLink shortLink = store.getShortLink("redirect_link");
+        ShortLink shortLink = store.getOrCreate("redirect_link");
 
         Response response = given()
                 .redirects()

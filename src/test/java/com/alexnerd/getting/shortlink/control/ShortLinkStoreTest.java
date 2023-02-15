@@ -42,7 +42,7 @@ public class ShortLinkStoreTest {
     @DisplayName("Should create short link")
     public void shouldCreateShortLinkTest() {
         String redirectLink = "https://test-link.ru";
-        ShortLink shortLink = store.getShortLink(redirectLink);
+        ShortLink shortLink = store.getOrCreate(redirectLink);
 
         assertNotNull(shortLink.createTime);
         assertNull(shortLink.readTime);
@@ -53,8 +53,8 @@ public class ShortLinkStoreTest {
     @DisplayName("Should not create short link if redirect link already exists")
     public void shouldNotCreateIfRedirectLinkExistsTest() {
         String redirectLink = "https://redirect-link.ru";
-        ShortLink shortLinkFirst = store.getShortLink(redirectLink);
-        ShortLink shortLinkSecond = store.getShortLink(redirectLink);
+        ShortLink shortLinkFirst = store.getOrCreate(redirectLink);
+        ShortLink shortLinkSecond = store.getOrCreate(redirectLink);
 
         assertEquals(shortLinkFirst.shortLink, shortLinkSecond.shortLink);
     }
@@ -64,8 +64,8 @@ public class ShortLinkStoreTest {
     public void shouldCreateDifferentLinkTest() {
         String redirectLinkFirst = "https://test-link-1.ru";
         String redirectLinkSecond = "https://test-link-2.ru";
-        ShortLink shortLinkFirst = store.getShortLink(redirectLinkFirst);
-        ShortLink shortLinkSecond = store.getShortLink(redirectLinkSecond);
+        ShortLink shortLinkFirst = store.getOrCreate(redirectLinkFirst);
+        ShortLink shortLinkSecond = store.getOrCreate(redirectLinkSecond);
 
         assertNotEquals(shortLinkFirst.shortLink, shortLinkSecond.shortLink);
     }
@@ -83,7 +83,7 @@ public class ShortLinkStoreTest {
     @DisplayName("Should update read time after redirect")
     public void shouldUpdateReadTimeTest() {
         String redirectLink = "https://test-link.ru";
-        ShortLink shortLink = store.getShortLink(redirectLink);
+        ShortLink shortLink = store.getOrCreate(redirectLink);
 
         assertNull(shortLink.readTime);
 
