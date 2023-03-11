@@ -30,14 +30,12 @@ public class LinkGenerator {
 
     @PostConstruct
     public void init() {
-        SecureRandom secureRandom;
         try {
             secureRandom = SecureRandom.getInstance("NativePRNGNonBlocking");
         } catch (NoSuchAlgorithmException ex) {
             Log.warn("Can't use NativePRNGNonBlocking algorithm: " + ex);
             secureRandom = new SecureRandom();
         }
-        this.secureRandom = secureRandom;
     }
 
     public String generateShortLink(int passLength) {
